@@ -51,6 +51,7 @@ class Player:
         self.current_health = self.max_health
         self.current_stamina = self.max_stamina
 
+    # SETTERS for defending, attacking, and taking damage
     def toggle_defend(self, state):
         if state == True:
             self.lose_stamina('defend')
@@ -100,7 +101,7 @@ class Player:
 
         # 20% chance to deal 1.5 times the damage, 10% to deal half damage
         crit = random.randint(1, 10)
-        if crit == 10:
+        if crit >= 9:
             crit_success = 1
             damage = int(damage * 1.5)
         elif crit == 1:
@@ -116,6 +117,7 @@ class Player:
         self.toggle_attack(True)
         self.display_crit(crit_success, damage, enemy)
 
+    # Prints a different message for if you dodge successfully or fail
     def print_dodge(self, crit, enemy):
         if crit == 0:
             print('You dodge ' + enemy.get_name() + '\'s swing with ease.\n')
@@ -135,6 +137,7 @@ class Player:
 
         dodge_chance = random.randint(1, 100)
 
+        # Chance to take crit damage increases if recently attacked or dodged
         if fail == False:
             if dodge_chance < 10:
                 crit = self.take_crit_damage(damage)
@@ -175,15 +178,14 @@ class Player:
         self.print_options()
 
         choice = input('\nWhat action would you like to take? ')
-
         choices = ['attack', 'defend', 'hold', 'forfeit']
-
         while choice != '1' and choice != '2' and choice != '3' and choice != '4' and choices.count(choice.lower() == 0):
             print('Invalid input')
             choice = input('\nWhat action would you like to take? ')
 
         print('')
 
+        # Checks input from player
         if choice == '1' or choice.lower() == 'attack':
             return 1
         elif choice == '2' or choice.lower() == 'defend':
@@ -198,18 +200,21 @@ class Player:
             else:
                 return 3
 
+    # Checks if stamina is below 0 or not
     def check_stamina(self):
         if self.current_stamina <= 0:
             self.current_stamina = 0
             return True
         return False
 
+    # Prints a different option depending on if the player is currently defending or not
     def print_hold_options(self):
         if self.get_defense_state() == True:
             print('2. Hold (defend)')
         else:
             print('2. Hold')
 
+    # Returns response string to be interpreted
     def response_option(self, choice):
         if choice == '1':
             return 'dodge'
@@ -241,6 +246,7 @@ class Player:
         self.toggle_attack(False)
         self.display_stats()
 
+    # Interprets choice from player during player turn
     def turn_option(self, choice, enemy):
         if choice == 1:
             self.attack(enemy)
@@ -255,11 +261,13 @@ class Player:
         else:
             return 'hold'
 
+    # Sequence for player turn
     def turn(self, enemy):
         self.start_turn()
 
         no_stamina = self.check_stamina()
 
+        # If player is out of stamina, they automatically hold
         if no_stamina:
             print('\nYour hand trembles, too weak to hold your blade.\n')
             return 'hold'

@@ -43,6 +43,7 @@ class Enemy:
     def get_level(self):
         return self.level
 
+    # SETTERS for damage/health and defending state
     def take_damage(self, damage):
         self.current_health -= damage
 
@@ -72,6 +73,7 @@ class Enemy:
             damage = int(damage * 0.5)
         return damage
 
+    # Determines whether an attack on a holding player will hit or not
     def determine_hold_attack(self, player, damage):
         if player.get_defense_state() == True:
             damage = int(damage * 0.5)
@@ -115,6 +117,7 @@ class Enemy:
         if self.current_stamina > self.max_stamina:
             self.current_stamina = self.max_stamina
 
+    # Checks whether enemy has no stamina or not
     def check_stamina(self):
         if self.get_current_stamina() <= 0:
             return True
@@ -130,13 +133,15 @@ class Enemy:
 
         self.start_turn()
 
+        # If enemy has no stamina, they do nothing on their turn
         if no_stamina:
             print(self.get_name() + ' takes a moment to catch their breath.\n')
             return
 
         action = random.randint(1, 10)
 
-        if action > 4:
+        # If enemy has stamina, they will always either attack or defend
+        if action > 3:
             self.attack(player)
         else:
             self.toggle_defend(True)
